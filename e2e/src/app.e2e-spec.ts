@@ -1,14 +1,15 @@
+// 模擬使用者的腳本，優先跑這裡再跑其他目錄
 import { AppPage } from './app.po';
 import { browser, logging } from 'protractor';
 
-describe('App', () => {
+describe('App', () => { // 測試情境
   let page: AppPage;
 
   beforeEach(() => {
     page = new AppPage();
   });
 
-  it('should display title', () => {
+  it('should display title', () => { // 測試案例，it沒什麼意思，方便組成句子
     page.navigateTo();
     expect(page.getTitleText()).toEqual('Protractor 訓練營');
   });
