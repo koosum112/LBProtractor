@@ -2,7 +2,7 @@
 import { browser, by, element, $, $$, Key, logging, ExpectedConditions as EC, ElementFinder, ElementArrayFinder } from 'protractor';
 import * as path from 'path';
 
-fdescribe('練習表單操作', () => {
+describe('P75 練習表單操作', () => {
   it('打開建立活動頁面', async () => {
     await browser.get('http://localhost:4200/events/new');
     const url = await browser.getCurrentUrl();
@@ -10,24 +10,27 @@ fdescribe('練習表單操作', () => {
   });
 
   it('輸入活動名稱 Protractor 實戰', async () => {
-    /*
+    /* 寫法一
       const name = $('input[name=name]');
       await name.sendKeys('Protractor 實戰');
       const value = await name.getAttribute('value');
       expect(value).toBe('Protractor 實戰');
     */
+
+    // 寫法二
     await element(by.id('name')).sendKeys('Protractor 實戰');
     const value = await element(by.id('name')).getAttribute('value');
     expect(value).toBe('Protractor 實戰');
   });
 
+  // 寫死的方法
   xit('使用 Datepicker 選擇活動日期 2019/11/16', async () => {
-    await element(by.tagName('mat-datepicker-toggle')).element(by.tagName('button')).click();
-    expect (await element(by.tagName('mat-calendar')).isPresent()).toBeTruthy();
+    await element(by.tagName('mat-datepicker-toggle')).element(by.tagName('button')).click(); // 點擊月曆btn
+    expect (await element(by.tagName('mat-calendar')).isPresent()).toBeTruthy(); // 檢驗月曆元件有打開
 
-    const year = await element(by.tagName('mat-calendar-header')).$('.mat-calendar-period-button');
+    const year = await element(by.tagName('mat-calendar-header')).$('.mat-calendar-period-button'); // 取得元件目前的年月
     const yearValue = await year.getText();
-    if (yearValue !== 'NOV 2019') {
+    if (yearValue !== 'NOV 2019') { // 判斷是不是我要的年月(也不一定要判斷，拿來簡單測試js語法)
       await year.click();
       await element(by.cssContainingText('.mat-calendar-body-cell-content', '2019')).click();
       await element(by.cssContainingText('.mat-calendar-body-cell-content', 'NOV')).click();
@@ -38,31 +41,33 @@ fdescribe('練習表單操作', () => {
 
   });
 
+  // 寫活的方法
   it('使用 Datepicker 選擇活動日期 2019/11/16', async () => {
     const _year = '2019';
     const _month = 'NOV';
     const _date = '16';
+
     await element(by.tagName('mat-datepicker-toggle')).element(by.tagName('button')).click(); // 月曆按鈕
     expect (await element(by.tagName('mat-calendar')).isPresent()).toBeTruthy(); // 檢查月曆元件是否顯示
 
-    const yearCtrl = await element(by.tagName('mat-calendar-header')).$('.mat-calendar-period-button');
-    const yearValue = await yearCtrl.getText();
-    if (yearValue.indexOf(_year) === -1) {
-      await yearCtrl.click();
+    const yearMonthCtrl = await element(by.tagName('mat-calendar-header')).$('.mat-calendar-period-button'); // 取得元件目前的年月
+    const yearMonthValue = await yearMonthCtrl.getText();
+    if (yearMonthValue !== (_month + ' ' + _year)) {
+      await yearMonthCtrl.click(); // 第一次點擊後，這個ctrl的值會變成"年區間"
 
       let yearRange = '';
       let sYear = '';
       let eYear = '';
 
       do {
-        yearRange = await yearCtrl.getText();
+        yearRange = await yearMonthCtrl.getText(); // 取得年區間
         sYear = yearRange.split(' – ')[0];
         eYear = yearRange.split(' – ')[1];
 
         if (+_year < +sYear) {
-          await element(by.css('.mat-calendar-previous-button')).click();
+          await element(by.css('.mat-calendar-previous-button')).click(); // 年份往左
         } else if (+_year > +eYear) {
-          await element(by.css('.mat-calendar-next-button')).click();
+          await element(by.css('.mat-calendar-next-button')).click(); // 年份往右
         }
 
       } while (+_year < +sYear || +_year > +eYear);
@@ -71,10 +76,13 @@ fdescribe('練習表單操作', () => {
       await element(by.cssContainingText('.mat-calendar-body-cell-content', _month)).click();
     }
     await element(by.cssContainingText('.mat-calendar-body-cell-content', _date)).click();
+
+    // 驗證日期
     const value = await element(by.id('eventDate')).getAttribute('value');
     expect(value).toBe('11/16/2019');
   });
 
+  // 日期進階練習，把xit改成it即可使用
  xit('使用 Datepicker 選擇活動日期 1997/12/31', async () => {
     const _year = '1997';
     const _month = 'DEC';
@@ -82,27 +90,24 @@ fdescribe('練習表單操作', () => {
     await element(by.tagName('mat-datepicker-toggle')).element(by.tagName('button')).click(); // 月曆按鈕
     expect (await element(by.tagName('mat-calendar')).isPresent()).toBeTruthy(); // 檢查月曆元件是否顯示
 
-    const yearCtrl = await element(by.tagName('mat-calendar-header')).$('.mat-calendar-period-button');
-    const yearValue = await yearCtrl.getText();
-    if (yearValue.indexOf(_year) === -1) {
-      await yearCtrl.click();
+    const yearMonthCtrl = await element(by.tagName('mat-calendar-header')).$('.mat-calendar-period-button'); // 取得元件目前的年月
+    const yearMonthValue = await yearMonthCtrl.getText();
+    if (yearMonthValue !== (_month + ' ' + _year)) {
+      await yearMonthCtrl.click(); // 第一次點擊後，這個ctrl的值會變成"年區間"
 
       let yearRange = '';
       let sYear = '';
       let eYear = '';
 
       do {
-        yearRange = await yearCtrl.getText();
-
-        // expect(yearRange).toBe('2016 – 2039');
+        yearRange = await yearMonthCtrl.getText(); // 取得年區間
         sYear = yearRange.split(' – ')[0];
         eYear = yearRange.split(' – ')[1];
-        // expect(sYear).toBe('2016');
-        // expect(sYear).toBe('2039');
+
         if (+_year < +sYear) {
-          await element(by.css('.mat-calendar-previous-button')).click();
+          await element(by.css('.mat-calendar-previous-button')).click(); // 年份往左
         } else if (+_year > +eYear) {
-          await element(by.css('.mat-calendar-next-button')).click();
+          await element(by.css('.mat-calendar-next-button')).click(); // 年份往右
         }
 
       } while (+_year < +sYear || +_year > +eYear);
@@ -111,6 +116,8 @@ fdescribe('練習表單操作', () => {
       await element(by.cssContainingText('.mat-calendar-body-cell-content', _month)).click();
     }
     await element(by.cssContainingText('.mat-calendar-body-cell-content', _date)).click();
+
+    // 驗證日期
     const value = await element(by.id('eventDate')).getAttribute('value');
     expect(value).toBe('12/31/1997');
   });
