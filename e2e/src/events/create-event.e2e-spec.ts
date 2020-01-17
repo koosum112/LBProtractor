@@ -4,7 +4,7 @@ import * as path from 'path';
 
 describe('P75 練習表單操作', () => {
   it('打開建立活動頁面', async () => {
-    await browser.get('http://localhost:4200/events/new');
+    await browser.get('/events/new');
     const url = await browser.getCurrentUrl();
     expect(url).toContain('/events/new');
   });
@@ -174,6 +174,7 @@ describe('P75 練習表單操作', () => {
     const title = newActivity.element(by.tagName('h2'));
     const value = await title.getText();
     expect(value).toBe('PROTRACTOR 實戰');
+    // expect().nothing(); // 不期待任何東西，直接認定為成功
   });
 });
 
